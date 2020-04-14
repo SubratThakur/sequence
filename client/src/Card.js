@@ -19,12 +19,13 @@ class Card extends Component {
 
         return (
             <div
+                id={`${this.props.store.game.board[this.props.position].name+"-drop-card-"+this.props.position}`}
                 // onClick={() => this.props.store.devMoveHere(this.props.position)}
                 style={{
                     backgroundImage: `url(${this.props.store.game.board[this.props.position].url})`,
                     ...boxShadow,
                 }}
-                className={`drop-zone game-tile item d-flex flex-wrap align-content-between zoom justify-content-between ${this.props.store.game.board[this.props.position].name+"-drop-card"}`}
+                className={`drop-zone game-tile item d-flex flex-wrap align-content-between zoom justify-content-between ${this.props.store.game.board[this.props.position].name+"-drop-card-"+this.props.position}`}
                 onMouseLeave={this.props.store.clearMousedOverTile}
                 onMouseEnter={() => this.props.store.setMousedOverTile(this.props.position)}
             >

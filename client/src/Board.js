@@ -148,7 +148,6 @@ class Board extends Component {
                     </div>
                     <Chatbar/>
                     <div className="d-flex flex-row">
-                        <HandCard top={true} position={91}/>
                         <HandCard top={true} position={92}/>
                         <HandCard top={true} position={94}/>
                         <HandCard top={true} position={96}/>

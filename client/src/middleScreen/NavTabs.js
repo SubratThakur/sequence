@@ -33,6 +33,10 @@ class NavTabs extends Component {
                         )}
                     </div>
                 </li>
+                <li className="nav-item cursor float-right pos-abs right0" onClick={() => this.props.store.toggle}>
+                    <button className="btn"
+                        onClick={this.props.store.toggle}><i className="fa fa-home"></i> Close</button>
+                </li>
             </ul>
         )
     }

@@ -10,6 +10,8 @@ class Store {
     socket = io(`${URL}/`, {forceNew: true});
     mousedOverTile = null;
     game = {};
+    show = false;
+    firstTime = true;
     selectedTab = "my_info";
     gameAuthInfo = {};
     connectToGame = () => {
@@ -54,6 +56,19 @@ class Store {
             player_index: playerIndex,
         });
     };
+
+    getState = () => {
+        return this.state;
+    }
+
+    toggle = () => {
+        if(this.firstTime){
+            this.enableDragDropCard();
+        }
+        this.firstTime = false;
+        this.show = !this.show;
+    }
+
     payOutOfJail = () => {
         const playerIndex = this.playerIndex;
         this.game.player_info[playerIndex].money -= 50;
@@ -571,17 +586,14 @@ class Store {
             old_player: playerIndex,
         });
     };
-    startGame = () => {
-        this.game.game_state = "STARTED";
-        this.socket.emit('start_game', {
-            game_id: this.gameAuthInfo.game_id,
-        });
-        this.initialX = 0;
-        this.initialY = 0;
+
+    enableDragDropCard = () => {
         for(var i = 1; i < 100; i++){
-            interact('.'+this.store.game.board[i].name+"-drop-card")
+            this.dropelem = document.getElementById(this.game.board[i].name+"-drop-card-"+i);
+            this.dragaccept = document.getElementsByClassName(this.game.board[i].name);
+            interact(this.dropelem)
                 .dropzone({
-                accept: "#"+this.store.game.board[i].name,
+                accept: this.dragaccept,
                 overlap: 0.75,
                 ondropactivate: function (event) {
                     const item = event.relatedTarget
@@ -611,40 +623,62 @@ class Store {
                 }
             }) 
         }
-        const cardinHand = [91, 92, 94,96,98,99];
+        const cardinHand = [92, 94,96,98,99];
         for(var i = 0; i < cardinHand.length; i++){
             this.initialX = 0;
         this.initialY = 0;
         console.log("componentdidmount")
-        interact('#'+this.store.game.board[cardinHand[i]].name).draggable({
+        this.dragelem = document.getElementById(this.game.board[cardinHand[i]].name+"-"+cardinHand[i]);
+        interact(this.dragelem).draggable({
             onmove: function(event) {
-              const target = event.target;
-        
-              const dataX = target.getAttribute('data-x');
-              const dataY = target.getAttribute('data-y');
-              this.initialX = parseFloat(dataX) || 0;
-              this.initialY = parseFloat(dataY) || 0;
-        
-              const deltaX = event.dx;
-              const deltaY = event.dy;
-        
-              const newX = this.initialX + deltaX;
-              const newY = this.initialY + deltaY;
-        
-              target
-                .style
-                .transform = `translate(${newX}px, ${newY}px)`;
-        
-              target.setAttribute('data-x', newX);
-              target.setAttribute('data-y', newY);
+              
             },
-            inertia: true,
-            restrict: {
-                restriction: 'parent',
-            }
+            modifiers: [
+                interact.modifiers.restrictRect({
+                  restriction: 'parent',
+                  endOnly: true
+                })
+              ],
+              autoScroll: true,
+              // dragMoveListener from the dragging demo above
+              listeners: { move: this.dragMoveListener }
           })
         }
+    }
+    startGame = () => {
+        this.game.game_state = "STARTED";
+        this.socket.emit('start_game', {
+            game_id: this.gameAuthInfo.game_id,
+        });
+        this.initialX = 0;
+        this.initialY = 0;
+        this.enableDragDropCard();
+        this.toggle();
     };
+
+    dragMoveListener = (event) => {
+      
+        // update the posiion attributes
+        const target = event.target;
+        
+        const dataX = target.getAttribute('data-x');
+        const dataY = target.getAttribute('data-y');
+        this.initialX = parseFloat(dataX) || 0;
+        this.initialY = parseFloat(dataY) || 0;
+
+        const deltaX = event.dx;
+        const deltaY = event.dy;
+
+        const newX = this.initialX + deltaX;
+        const newY = this.initialY + deltaY;
+
+        target
+        .style
+        .transform = `translate(${newX}px, ${newY}px)`;
+
+        target.setAttribute('data-x', newX);
+        target.setAttribute('data-y', newY);
+    }
     movePlayer = () => {
         const playerIndex = this.playerIndex;
         this.game.animated_players_move = {player: -1, moves: []};
@@ -896,7 +930,7 @@ class Store {
         });
     };
     setGameInfo = (data) => {
-        this.game = data
+        this.game = data;
     };
     setMousedOverTile = (tile) => {
         this.mousedOverTile = tile;
@@ -1167,6 +1201,7 @@ decorate(Store, {
     mousedOverTile: observable,
     selectedTab: observable,
     gameAuthInfo: observable,
+    show: observable,
     diceSum: computed,
     playerState: computed,
     inGame: computed,
@@ -1221,6 +1256,8 @@ decorate(Store, {
     socketActions: action,
     connectToGame: action,
     startGame: action,
+    toggle: action,
+    getState: action,
 });
 
 export default new Store();

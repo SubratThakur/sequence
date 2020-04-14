@@ -8,6 +8,7 @@ import PlayersTab from './PlayersTab';
 import MousedOverTileTab from './MousedOverTileTab';
 
 class MainView extends Component {
+    
     state = {
         dropdownExpanded: false,
         selectedTab: "my_info",
@@ -22,8 +23,8 @@ class MainView extends Component {
     };
 
     render() {
-        return (
-            <div className="main-view desktop-view">
+        return ( 
+            <div className={`main-view desktop-view ${this.props.store.show? 'display-none': '' }`}>
                 {this.props.store.game && this.props.store.game.game_state !== "NOT_STARTED" &&
                 <div className="main-view-content">
                     {this.props.store.mousedOverTile !== null && (

@@ -19,13 +19,14 @@ class HandCard extends Component {
 
         return (
             <div
+                id={this.props.store.game.board[this.props.position].name+"-"+this.props.position}
                 ref={this.props.store.game.board[this.props.position].name}
                 // onClick={() => this.props.store.devMoveHere(this.props.position)}
                 style={{
                     backgroundImage: `url(${this.props.store.game.board[this.props.position].url})`,
                     ...boxShadow,
                 }}
-                className={`drag-card item game-tile d-flex flex-wrap align-content-between zoom justify-content-between ${this.props.store.game.board[this.props.position].name}`}
+                className={`drag-card item game-tile d-flex flex-wrap align-content-between justify-content-between ${this.props.store.game.board[this.props.position].name}`}
                 onMouseLeave={this.props.store.clearMousedOverTile}
                 onMouseEnter={() => this.props.store.setMousedOverTile(this.props.position)}
             >

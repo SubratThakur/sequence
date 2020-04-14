@@ -18,17 +18,23 @@ class Chatbar extends Component {
         return (
             <div ref="logs" className="chat-area chat-area-width">
                 {this.props.store.game.logs.length === 0 && (
-                    <div>No actions yet...</div>
+                    <div>No actions yet...
+                        <button className="btn float-right"
+                        onClick={this.props.store.toggle}><i className="fa fa-bars"></i></button>
+                    </div>
                 )}
                 {this.props.store.game.logs.map((log, i) => {
                     let date = new Date(log.time).toLocaleString();
                     date = date.slice(0, -6) + date.slice(-3, date.length);
                     return (
                         <div key={i}>
-                            {date}: {log.log}
+                            <span>{date}: {log.log}</span>
+                            <button className="btn float-right"
+                        onClick={this.props.store.toggle}><i className="fa fa-bars"></i></button>
                         </div>
                     )
                 })}
+                
             </div>
         );
     }
