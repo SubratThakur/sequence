@@ -11,10 +11,24 @@ const client = require("./db_connection");
 const {board, colors, chest, chance} = require("./monopoly");
 const ObjectId = require('mongodb').ObjectID;
 
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+
+    // intercept OPTIONS method
+    if ('OPTIONS' == req.method) {
+      res.send(200);
+    }
+    else {
+      next();
+    }
+};
+app.use(allowCrossDomain)
 app.use(morgan('short'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(cors());
+//app.use(cors());
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
@@ -26,6 +40,7 @@ const shuffle = (input_array) => {
     }
     return a;
 };
+
 app.get('/', async (req, res) => {
     res.json({asd: "asd", db: "hi"});
 });
