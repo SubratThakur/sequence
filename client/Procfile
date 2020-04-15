@@ -1,1 +1,1 @@
-web: npm workspace client start
+web: npm run start
